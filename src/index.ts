@@ -1,3 +1,1 @@
-const str: string = "Hello World";
-
-console.log(str);
+import { IgApiClient } from "instagram-private-api";
