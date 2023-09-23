@@ -7,7 +7,7 @@ import {
   TimelineFeedResponseMedia_or_ad,
   UserFeedResponseItemsItem,
 } from "instagram-private-api"
-import { sleep } from "./sleep"
+import { getRandomArrayEntry, sleep } from "./utils"
 
 export class Instagram {
   public ig = new IgApiClient()
@@ -80,6 +80,36 @@ export class Instagram {
       await this.likePicture(post.id)
       await sleep(5000)
     }
+  }
+
+  public async likeAndCommentTimeline(
+    commentList: string[],
+    commentProbabilityPercentage = 100,
+  ) {
+    if (!this.loggedInUser) throw new Error("user needs to be logged in")
+    const timeline = await this.getTimeline()
+    this.log(`Starting timeline like for ${timeline.length} pictures`)
+    for (const post of timeline) {
+      if (post.has_liked) {
+        this.log("already liked picture", post.id)
+        continue
+      }
+      await this.likePicture(post.id)
+      const probability = Math.floor(Math.random() * 100)
+      if (probability < commentProbabilityPercentage) {
+        await this.commentOnPicture(post.id, getRandomArrayEntry(commentList))
+      }
+      await sleep(5000)
+    }
+  }
+
+  public async commentOnPicture(id: string, comment: string) {
+    if (!this.loggedInUser) throw new Error("user needs to be logged in")
+    await this.ig.media.comment({
+      mediaId: id,
+      text: comment,
+      module: "mod",
+    })
   }
 
   public async likePicture(id: string) {

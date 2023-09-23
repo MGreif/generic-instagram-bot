@@ -15,7 +15,18 @@ dotenv.config()
     process.exit()
   })
 
-  schedule("0 12 * * * *", async () => {
-    await user.likeTimeline()
+  schedule("0 0,30 * * * *", async () => {
+    await user.likeAndCommentTimeline(
+      [
+        "😍♥️",
+        "This is amazing!",
+        "WOW!",
+        "I love your profile!",
+        "Somethings missing 🤔🖤",
+        "🖤♥️🖤",
+        "⚫",
+      ],
+      20,
+    )
   })
 })()
