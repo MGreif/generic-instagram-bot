@@ -1,36 +1,21 @@
 import { Instagram } from "./helpers/Instagram"
-
+import { schedule } from "node-cron"
 import dotenv from "dotenv"
 dotenv.config()
+;(async () => {
+  if (!process.env.USERNAME || !process.env.PASSWORD)
+    throw new Error("Specify USERNAME and PASSWORD in env variables")
 
-const sleep = (millis: number) => new Promise((res) => setTimeout(res, millis))
+  const user = new Instagram(process.env.USERNAME, process.env.PASSWORD)
+  await user.login()
 
-async function likeTimeline(user: Instagram) {
-  const timeline = await user.getTimeline()
-  user.log(`Starting timeline like for ${timeline.length} pictures`)
-  for (const post of timeline) {
-    await user.likePicture(post.id)
-    await sleep(5000)
-  }
-}
+  process.on("SIGINT", async function () {
+    console.log("Caught interrupt signal, logging out ...")
+    await user.logout()
+    process.exit()
+  })
 
-async function main() {
-  let user
-  try {
-    if (!process.env.USERNAME || !process.env.PASSWORD)
-      throw new Error("Specify USERNAME and PASSWORD in env variables")
-
-    user = new Instagram(process.env.USERNAME, process.env.PASSWORD)
-    await user.login()
-    await likeTimeline(user)
-  } catch (err) {
-    console.error("Process failed", err)
-  } finally {
-    user &&
-      (await user.ig.account
-        .logout()
-        .catch((err) => console.error("failed to logout user")))
-  }
-}
-
-main().catch((err) => console.log("ERROR", err))
+  schedule("0 12 * * * *", async () => {
+    await user.likeTimeline()
+  })
+})()

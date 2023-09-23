@@ -7,6 +7,7 @@ import {
   TimelineFeedResponseMedia_or_ad,
   UserFeedResponseItemsItem,
 } from "instagram-private-api"
+import { sleep } from "./sleep"
 
 export class Instagram {
   public ig = new IgApiClient()
@@ -41,6 +42,12 @@ export class Instagram {
     this.loggedInUser = loggedInUser || null
   }
 
+  public async logout() {
+    await this.ig.account
+      .logout()
+      .catch((err) => this.error("failed to logout"))
+  }
+
   public async *getFeed(): AsyncGenerator<UserFeedResponseItemsItem[]> {
     if (!this.loggedInUser) throw new Error("user needs to be logged in")
     const userFeed = this.ig.feed.user(this.loggedInUser.pk)
@@ -59,6 +66,20 @@ export class Instagram {
     if (!this.loggedInUser) throw new Error("user needs to be logged in")
     const results: TimelineFeed = await this.ig.feed.timeline()
     return results.items()
+  }
+
+  public async likeTimeline() {
+    if (!this.loggedInUser) throw new Error("user needs to be logged in")
+    const timeline = await this.getTimeline()
+    this.log(`Starting timeline like for ${timeline.length} pictures`)
+    for (const post of timeline) {
+      if (post.has_liked) {
+        this.log("already liked picture", post.id)
+        continue
+      }
+      await this.likePicture(post.id)
+      await sleep(5000)
+    }
   }
 
   public async likePicture(id: string) {

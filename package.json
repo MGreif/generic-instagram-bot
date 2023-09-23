@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/MGreif/generic-instagram-bot#readme",
   "devDependencies": {
+    "@types/node-cron": "^3.0.9",
     "@typescript-eslint/eslint-plugin": "^6.7.2",
     "eslint": "^8.50.0",
     "eslint-config-prettier": "^9.0.0",
@@ -30,6 +31,7 @@
   },
   "dependencies": {
     "dotenv": "^16.3.1",
-    "instagram-private-api": "^1.45.3"
+    "instagram-private-api": "^1.45.3",
+    "node-cron": "^3.0.2"
   }
 }
