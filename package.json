@@ -1,0 +1,26 @@
+{
+  "name": "generic-instagram-bot",
+  "version": "1.0.0",
+  "description": "A simple Intagram Bot project to automate simple tasks e.g. customer aquisition",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node ./lib/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MGreif/generic-instagram-bot.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MGreif/generic-instagram-bot/issues"
+  },
+  "homepage": "https://github.com/MGreif/generic-instagram-bot#readme",
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "instagram-private-api": "^1.45.3"
+  }
+}
